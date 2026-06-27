@@ -4,13 +4,13 @@ import {
   login,
   getMe,
   updateMe,
-} from "../controllers/auth.controller.js";
-import { protect } from "../middlewares/auth.middleware.js";
+} from "../controllers/authController.js";
+import { protect } from "../middleware/auth.js";
 import {
   registerValidation,
   loginValidation,
   validate,
-} from "../middlewares/validation.middleware.js";
+} from "../middleware/validators.js";
 
 const router = express.Router();
 

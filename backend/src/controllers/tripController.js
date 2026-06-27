@@ -1,5 +1,5 @@
-import Trip from "../models/trip.model.js";
-import aiService from "../services/ai.service.js";
+import Trip from "../models/Trip.js";
+import aiService from "../services/aiService.js";
 
 export const getTrips = async (req, res, next) => {
   try {

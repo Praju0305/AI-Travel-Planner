@@ -1,4 +1,4 @@
-import User from "../models/user.model.js";
+import User from "../models/User.js";
 import { sendTokenResponse } from "../utils/jwt.js";
 
 // @desc    Register user

@@ -11,14 +11,14 @@ import {
   getWeatherAdvice,
   updateTrip,
   deleteTrip,
-} from "../controllers/trip.controller.js";
+} from "../controllers/tripController.js";
 
-import { protect } from "../middlewares/auth.middleware.js";
+import { protect } from "../middleware/auth.js";
 
 import {
   tripValidation,
   validate,
-} from "../middlewares/validation.middleware.js";
+} from "../middleware/validators.js";
 
 const router = express.Router();
 

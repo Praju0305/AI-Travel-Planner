@@ -6,13 +6,15 @@ import cors from "cors";
 import morgan from "morgan";
 
 import connectDB from "./config/db.js";
-import errorHandler from "./middlewares/errorHandler.js";
+import errorHandler from "./middleware/errorHandler.js";
 
-import authRoutes from "./routes/auth.routes.js";
-import tripRoutes from "./routes/trip.routes.js";
+import authRoutes from "./routes/auth.js";
+import tripRoutes from "./routes/trips.js";
 
 const app = express();
 
+console.log("MONGO_URI:", process.env.MONGO_URI);
+console.log("Current working directory:", process.cwd());
 // Connect to database
 connectDB();
 
