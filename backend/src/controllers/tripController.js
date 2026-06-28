@@ -63,6 +63,8 @@ export const createTrip = async (req, res, next) => {
 
 export const generateTrip = async (req, res, next) => {
   try {
+    console.log("req.user:", req.user);
+console.log("Trip ID:", req.params.id);
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
 
     if (!trip) {

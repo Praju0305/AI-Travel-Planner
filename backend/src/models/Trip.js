@@ -9,18 +9,25 @@ const activitySchema = new Schema({
   location: { type: String, default: "" },
   duration: { type: String, default: "" },
   cost: { type: String, default: "" },
-  type: {
-    type: String,
-    enum: [
-      "food",
-      "culture",
-      "adventure",
-      "shopping",
-      "transport",
-      "accommodation",
-      "other",
-    ],
-    default: "other",
+type: {
+  type: String,
+  enum: [
+    "culture",
+    "food",
+    "adventure",
+    "shopping",
+    "transport",
+    "nature",
+    "relaxation",
+    "sightseeing",
+    "leisure",
+    "history",
+    "nightlife",
+    "entertainment",
+    "museum",
+    "other",
+  ],
+  default: "other",
   },
 });
 

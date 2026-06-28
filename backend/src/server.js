@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+console.log("Gemini Key:", process.env.GEMINI_API_KEY?.substring(0, 12));
+
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
