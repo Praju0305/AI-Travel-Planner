@@ -7,9 +7,7 @@ const callGemini = async (prompt, systemPrompt = "") => {
     model: "gemini-2.5-flash",
   });
 
-  const result = await model.generateContent(
-    `${systemPrompt}\n\n${prompt}`
-  );
+  const result = await model.generateContent(`${systemPrompt}\n\n${prompt}`);
 
   return result.response.text();
 };
@@ -282,15 +280,26 @@ ${month}
 Traveler Interests:
 ${interests.join(", ")}
 
-Return ONLY:
+Return ONLY this JSON:
 
 {
   "destination":"${destination}",
   "overview":"Summary",
   "generalPackingList":[
-    "Item1",
-    "Item2"
+    "Umbrella",
+    "Comfortable shoes"
   ],
+  "clothingRecommendations":[
+    "Wear breathable cotton clothes",
+    "Carry a light jacket",
+    "Wear comfortable walking shoes"
+  ],
+  "healthTips":[
+    "Stay hydrated",
+    "Use sunscreen"
+  ],
+  "bestTimeOfDay":"Morning and evening",
+
   "days":[
     {
       "day":1,
@@ -299,6 +308,10 @@ Return ONLY:
     }
   ]
 }
+
+IMPORTANT:
+Return ALL fields exactly.
+Do not omit clothingRecommendations, healthTips or bestTimeOfDay.
 `;
 
   const text = await callGemini(prompt, systemPrompt);
