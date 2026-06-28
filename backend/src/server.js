@@ -17,27 +17,14 @@ const app = express();
 connectDB();
 
 // Middleware
-
-import cors from "cors";
-
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://ai-travel-planner-dihxg37t8-prajwalbm0305-6093s-projects.vercel.app",
-];
-
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: [
+      "http://localhost:3000",
+      "https://ai-travel-planner-dihxg37t8-prajwalbm0305-6093s-projects.vercel.app",
+    ],
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json({ limit: "10mb" }));
