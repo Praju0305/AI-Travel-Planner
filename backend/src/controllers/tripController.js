@@ -4,8 +4,8 @@ import aiService from "../services/aiService.js";
 export const getTrips = async (req, res, next) => {
   try {
     const trips = await Trip.find({ user: req.user._id })
-      .select('-itinerary -chatHistory')
-      .sort('-createdAt');
+      .select("-itinerary -chatHistory")
+      .sort("-createdAt");
 
     res.json({ success: true, count: trips.length, trips });
   } catch (error) {
@@ -22,7 +22,9 @@ export const getTrip = async (req, res, next) => {
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
 
     if (!trip) {
-      return res.status(404).json({ success: false, message: 'Trip not found.' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
     }
 
     res.json({ success: true, trip });
@@ -37,7 +39,15 @@ export const getTrip = async (req, res, next) => {
 
 export const createTrip = async (req, res, next) => {
   try {
-    const { destination, numberOfDays, budgetType, interests, travelStyle, startDate, notes } = req.body;
+    const {
+      destination,
+      numberOfDays,
+      budgetType,
+      interests,
+      travelStyle,
+      startDate,
+      notes,
+    } = req.body;
 
     const trip = await Trip.create({
       user: req.user._id,
@@ -46,7 +56,7 @@ export const createTrip = async (req, res, next) => {
       numberOfDays,
       budgetType,
       interests,
-      travelStyle: travelStyle || 'solo',
+      travelStyle: travelStyle || "solo",
       startDate,
       notes,
     });
@@ -63,12 +73,12 @@ export const createTrip = async (req, res, next) => {
 
 export const generateTrip = async (req, res, next) => {
   try {
-    console.log("req.user:", req.user);
-console.log("Trip ID:", req.params.id);
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
 
     if (!trip) {
-      return res.status(404).json({ success: false, message: 'Trip not found.' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
     }
 
     const context = {
@@ -86,21 +96,30 @@ console.log("Trip ID:", req.params.id);
       aiService.suggestHotels(context),
     ]);
 
+    itineraryData.itinerary.forEach((day) => {
+      day.activities = day.activities.map((activity) => ({
+        ...activity,
+        type: normalizeActivityType(activity.type),
+      }));
+    });
+
     // Update trip with generated content
     trip.title = itineraryData.title || trip.title;
     trip.itinerary = itineraryData.itinerary;
     trip.budget = budgetData;
     trip.hotels = hotelsData;
     trip.isGenerated = true;
-    trip.status = 'planning';
+    trip.status = "planning";
 
     await trip.save();
 
     res.json({ success: true, trip });
   } catch (error) {
-    console.error('AI generation error:', error.message);
+    console.error("AI generation error:", error.message);
     if (error.response?.status === 401) {
-      return res.status(500).json({ success: false, message: 'Invalid Anthropic API key.' });
+      return res
+        .status(500)
+        .json({ success: false, message: "Invalid Anthropic API key." });
     }
     next(error);
   }
@@ -117,12 +136,16 @@ export const regenerateDay = async (req, res, next) => {
 
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
     if (!trip) {
-      return res.status(404).json({ success: false, message: 'Trip not found.' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
     }
 
     const dayIndex = trip.itinerary.findIndex((d) => d.day === dayNumber);
     if (dayIndex === -1) {
-      return res.status(404).json({ success: false, message: 'Day not found in itinerary.' });
+      return res
+        .status(404)
+        .json({ success: false, message: "Day not found in itinerary." });
     }
 
     const currentDay = trip.itinerary[dayIndex];
@@ -130,16 +153,27 @@ export const regenerateDay = async (req, res, next) => {
       destination: trip.destination,
       dayNumber,
       currentActivities: currentDay.activities,
-      preferences: preferences || 'more variety',
+      preferences: preferences || "more variety",
       numberOfDays: trip.numberOfDays,
       budgetType: trip.budgetType,
       interests: trip.interests,
     });
 
-    trip.itinerary[dayIndex] = { ...trip.itinerary[dayIndex].toObject(), ...newDay };
+    newDay.activities = newDay.activities.map((activity) => ({
+      ...activity,
+      type: normalizeActivityType(activity.type),
+    }));
+
+    trip.itinerary[dayIndex].theme = newDay.theme;
+    trip.itinerary[dayIndex].activities = newDay.activities;
+    trip.itinerary[dayIndex].notes = newDay.notes;
+
     await trip.save();
 
-    res.json({ success: true, day: trip.itinerary[dayIndex] });
+    res.json({
+      success: true,
+      day: trip.itinerary[dayIndex],
+    });
   } catch (error) {
     next(error);
   }
@@ -153,10 +187,16 @@ export const addActivity = async (req, res, next) => {
   try {
     const dayNumber = parseInt(req.params.dayNumber);
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
-    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
 
     const dayIndex = trip.itinerary.findIndex((d) => d.day === dayNumber);
-    if (dayIndex === -1) return res.status(404).json({ success: false, message: 'Day not found.' });
+    if (dayIndex === -1)
+      return res
+        .status(404)
+        .json({ success: false, message: "Day not found." });
 
     trip.itinerary[dayIndex].activities.push(req.body);
     await trip.save();
@@ -175,14 +215,20 @@ export const removeActivity = async (req, res, next) => {
   try {
     const dayNumber = parseInt(req.params.dayNumber);
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
-    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
 
     const dayIndex = trip.itinerary.findIndex((d) => d.day === dayNumber);
-    if (dayIndex === -1) return res.status(404).json({ success: false, message: 'Day not found.' });
+    if (dayIndex === -1)
+      return res
+        .status(404)
+        .json({ success: false, message: "Day not found." });
 
-    trip.itinerary[dayIndex].activities = trip.itinerary[dayIndex].activities.filter(
-      (a) => a._id.toString() !== req.params.activityId
-    );
+    trip.itinerary[dayIndex].activities = trip.itinerary[
+      dayIndex
+    ].activities.filter((a) => a._id.toString() !== req.params.activityId);
     await trip.save();
 
     res.json({ success: true, day: trip.itinerary[dayIndex] });
@@ -198,10 +244,16 @@ export const removeActivity = async (req, res, next) => {
 export const chatAssistant = async (req, res, next) => {
   try {
     const { message } = req.body;
-    if (!message) return res.status(400).json({ success: false, message: 'Message is required.' });
+    if (!message)
+      return res
+        .status(400)
+        .json({ success: false, message: "Message is required." });
 
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
-    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
 
     const tripContext = {
       destination: trip.destination,
@@ -224,8 +276,8 @@ export const chatAssistant = async (req, res, next) => {
     });
 
     // Save chat history
-    trip.chatHistory.push({ role: 'user', content: message });
-    trip.chatHistory.push({ role: 'assistant', content: assistantReply });
+    trip.chatHistory.push({ role: "user", content: message });
+    trip.chatHistory.push({ role: "assistant", content: assistantReply });
 
     // Keep chat history manageable (last 50 messages)
     if (trip.chatHistory.length > 50) {
@@ -248,9 +300,12 @@ export const updateTrip = async (req, res, next) => {
     const trip = await Trip.findOneAndUpdate(
       { _id: req.params.id, user: req.user._id },
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
-    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
     res.json({ success: true, trip });
   } catch (error) {
     next(error);
@@ -263,9 +318,15 @@ export const updateTrip = async (req, res, next) => {
 
 export const deleteTrip = async (req, res, next) => {
   try {
-    const trip = await Trip.findOneAndDelete({ _id: req.params.id, user: req.user._id });
-    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
-    res.json({ success: true, message: 'Trip deleted successfully.' });
+    const trip = await Trip.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
+    res.json({ success: true, message: "Trip deleted successfully." });
   } catch (error) {
     next(error);
   }
@@ -278,7 +339,10 @@ export const deleteTrip = async (req, res, next) => {
 export const getWeatherAdvice = async (req, res, next) => {
   try {
     const trip = await Trip.findOne({ _id: req.params.id, user: req.user._id });
-    if (!trip) return res.status(404).json({ success: false, message: 'Trip not found.' });
+    if (!trip)
+      return res
+        .status(404)
+        .json({ success: false, message: "Trip not found." });
 
     const weatherData = await aiService.generateWeatherAdvice({
       destination: trip.destination,
@@ -292,7 +356,35 @@ export const getWeatherAdvice = async (req, res, next) => {
 
     res.json({ success: true, weatherAdvice: weatherData });
   } catch (error) {
-    console.error('Weather advice error:', error.message);
+    console.error("Weather advice error:", error.message);
     next(error);
   }
+};
+
+const normalizeActivityType = (type) => {
+  // normalize and validate here
+  const normalizeActivityType = (type) => {
+    const allowedTypes = [
+      "culture",
+      "food",
+      "adventure",
+      "shopping",
+      "transport",
+      "nature",
+      "relaxation",
+      "sightseeing",
+      "leisure",
+      "history",
+      "entertainment",
+      "other",
+    ];
+
+    let normalized = (type || "other").toLowerCase().split(",")[0].trim();
+
+    if (!allowedTypes.includes(normalized)) {
+      normalized = "other";
+    }
+
+    return normalized;
+  };
 };

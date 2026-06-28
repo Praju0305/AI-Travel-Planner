@@ -1,8 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("Gemini Key:", process.env.GEMINI_API_KEY?.substring(0, 12));
-
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -15,8 +13,6 @@ import tripRoutes from "./routes/trips.js";
 
 const app = express();
 
-console.log("MONGO_URI:", process.env.MONGO_URI);
-console.log("Current working directory:", process.cwd());
 // Connect to database
 connectDB();
 
