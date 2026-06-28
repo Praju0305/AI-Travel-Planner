@@ -3,8 +3,8 @@
 A full-stack web app that uses Claude AI to generate personalized travel itineraries, budget estimates, hotel suggestions, and offers a conversational AI trip assistant.
 
 ## Live Demo
-- **Frontend:** https://ai-travel-planner.vercel.app
-- **Backend:** https://ai-travel-planner-backend.onrender.com
+- **Frontend:** https://ai-travel-planner-dihxg37t8-prajwalbm0305-6093s-projects.vercel.app/
+- **Backend:** https://ai-travel-planner-0vd6.onrender.com
 
 ---
 
