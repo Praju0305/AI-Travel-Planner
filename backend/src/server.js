@@ -18,21 +18,23 @@ connectDB();
 
 // Middleware
 
+import cors from "cors";
+
 const allowedOrigins = [
   "http://localhost:3000",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
+  "https://ai-travel-planner-dihxg37t8-prajwalbm0305-6093s-projects.vercel.app",
+];
 
 app.use(
   cors({
-    origin(origin, callback) {
+    origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      callback(new Error("Not allowed by CORS"));
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
