@@ -17,7 +17,7 @@ A full-stack web app that uses Claude AI to generate personalized travel itinera
 | Backend | Node.js + Express | Fast REST API, great ecosystem |
 | Database | MongoDB + Mongoose | Flexible schema for nested itinerary data |
 | Auth | JWT + bcryptjs | Stateless, secure, scalable |
-| AI | Anthropic Claude API | Best-in-class instruction following and JSON output |
+| AI | Google Gemini | Best-in-class instruction following and JSON output |
 
 ---
 
