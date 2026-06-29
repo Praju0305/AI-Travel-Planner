@@ -92,7 +92,7 @@ MongoDB
 
 ## AI Agent Design
 
-The AI agent (Claude Sonnet) is called via the Anthropic Messages API. Key design decisions:
+The AI agent is called via the Google Gemini Messages API. Key design decisions:
 
 1. **Parallel generation** — itinerary, budget, and hotels are generated in `Promise.all()` for 3× speed
 2. **Strict JSON prompting** — system prompt says "respond only with valid JSON, no markdown", and the output is cleaned before `JSON.parse()`
