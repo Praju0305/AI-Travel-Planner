@@ -21,7 +21,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://ai-travel-planner-dihxg37t8-prajwalbm0305-6093s-projects.vercel.app",
+      "https://ai-travel-planner-iota-nine.vercel.app/",
     ],
     credentials: true,
   }),
